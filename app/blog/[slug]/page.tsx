@@ -1,4 +1,7 @@
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { getServerSession } from "next-auth";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 export const revalidate = 420;
 
 interface IPost {
@@ -20,6 +23,12 @@ export async function generateStaticParams(){
 }
 
 export default async function BlogPostPage({params}: Props){
+    const session = await getServerSession(authOptions);
+  
+    if(!session){
+      redirect('/api/auth/signin')
+    }
+
 
     const posts: IPost[] = await fetch('http://localhost:3000/api/content').then(
         (res) => res.json()
